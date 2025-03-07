@@ -1,25 +1,15 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-
-import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-
-import { provideStore } from '@ngrx/store';
-import { categoriesReducer } from './features/categories/store/categories.reducer';
-import { expensesReducer } from './features/expenses/store/expenses.reducer';
-import { CategoriesEffects } from './features/categories/store/categories.effects';
-import { provideEffects } from '@ngrx/effects';
 import { provideHttpClient } from '@angular/common/http';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { provideStore } from '@ngrx/store';
+import { routes } from './app.routes';
+import { expenseReducer } from './state/expense.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), 
+    provideClientHydration(withEventReplay()), 
+    provideStore({ expenses: expenseReducer }),
     provideRouter(routes), 
-    provideHttpClient(),
-    provideClientHydration(withEventReplay()),
-    provideEffects(CategoriesEffects),
-    provideStore({ 
-      categories: categoriesReducer,
-      expenses: expensesReducer
-     })
-  ]
+    provideHttpClient()]
 };

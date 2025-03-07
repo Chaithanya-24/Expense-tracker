@@ -1,0 +1,6 @@
+<h2>Expense List</h2>
+<ul>
+  <li *ngFor="let expense of expenses$ | async">
+    <a [routerLink]="['/expense', expense.id]">{{ expense.title }}</a>
+  </li>
+</ul>

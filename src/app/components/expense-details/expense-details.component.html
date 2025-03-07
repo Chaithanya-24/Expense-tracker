@@ -1,0 +1,17 @@
+<h2>Expense Details</h2>
+
+<div *ngIf="expense; else notFound">
+  <p><strong>Title:</strong> {{ expense.title }}</p>
+  <p><strong>Amount:</strong> ${{ expense.amount }}</p>
+  <p><strong>Category:</strong> {{ expense.category }}</p>
+  <p><strong>Date:</strong> {{ expense.date }}</p>
+
+  <!-- ✅ Edit button to navigate to edit page -->
+  <a [routerLink]="['/edit-expense', expense.id]">✏️ Edit Expense</a>
+</div>
+
+<ng-template #notFound>
+  <p>Expense not found.</p>
+</ng-template>
+
+<a routerLink="/expenses">⬅ Back to Expenses</a>

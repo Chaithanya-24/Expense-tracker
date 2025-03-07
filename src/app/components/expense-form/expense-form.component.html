@@ -1,0 +1,110 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" class="mr-2" (click)="openCategoryDialog()" />
+    </ng-template>
+</p-toolbar>
+
+<form (submit)="saveExpense()">
+  <label>Title:</label>
+  <input type="text" [(ngModel)]="expense.title" name="title" required />
+
+  <label>Amount:</label>
+  <input type="number" [(ngModel)]="expense.amount" name="amount" required />
+
+  <label>Category:</label>
+  <select [(ngModel)]="expense.category" name="category">
+    <option *ngFor="let category of categories" [value]="category">
+      {{ category }}
+    </option>
+  </select>
+
+  <label>Date:</label>
+  <input type="date" [(ngModel)]="expense.date" name="date" />
+
+  <button type="submit">
+    {{ editingId !== null ? 'Update Expense' : 'Add Expense' }}
+  </button>
+</form>
+
+<h2>Expense List</h2>
+
+<!-- PrimeNG Table -->
+<p-table
+    #dt
+    [value]="(expenses$ | async) ?? []"
+    [rows]="10"
+    [paginator]="true"
+    responsiveLayout="scroll"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Title</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-expense>
+        <tr>
+            <!-- <td>{{ expense.title }}</td>
+            <td>{{ expense.amount | currency: 'USD' }}</td>
+            <td>{{ expense.category }}</td>
+            <td>{{ expense.date }}</td> -->
+            <td>Hi</td>
+            <td>Hi</td>
+            <td>Hi</td>
+            <td>Hi</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" (click)="editExpense(expense)" />
+                <p-button icon="pi pi-trash" severity="danger" (click)="deleteExpense(expense.id)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<!-- Expense List Dialog -->
+<p-dialog [(visible)]="categoryDialog" [style]="{ width: '600px' }" header="Expenses by Category" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <label for="categoryFilter">Select Category</label>
+            <p-dropdown
+                id="categoryFilter"
+                [(ngModel)]="selectedCategory"
+                [options]="categories"
+                placeholder="Choose a Category"
+                (onChange)="filterExpenses()"
+            ></p-dropdown>
+
+            <p-table
+                *ngIf="filteredExpenses.length > 0"
+                [value]="filteredExpenses"
+                [paginator]="true"
+                [rows]="5"
+                responsiveLayout="scroll"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Title</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-expense>
+                    <tr>
+                        <td>{{ expense.title }}</td>
+                        <td>{{ expense.amount | currency: 'USD' }}</td>
+                        <td>{{ expense.date }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <p-message *ngIf="filteredExpenses.length === 0" severity="info" text="No expenses found for this category."></p-message>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Close" icon="pi pi-times" text (click)="categoryDialog = false" />
+    </ng-template>
+</p-dialog>
+

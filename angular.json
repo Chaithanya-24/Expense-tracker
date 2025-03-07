@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "expense-tracker-app": {
+    "spendwise": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/expense-tracker-app",
+            "outputPath": "dist/spendwise",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -27,7 +27,6 @@
               }
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
             "scripts": [],
@@ -65,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "expense-tracker-app:build:production"
+              "buildTarget": "spendwise:build:production"
             },
             "development": {
-              "buildTarget": "expense-tracker-app:build:development"
+              "buildTarget": "spendwise:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -100,6 +99,6 @@
     }
   },
   "cli": {
-    "analytics": "b7132dac-45e0-4a25-b7ad-10b74e589593"
+    "analytics": false
   }
 }

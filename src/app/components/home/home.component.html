@@ -1,0 +1,12 @@
+<h2>Welcome to SpendWise</h2>
+
+<h3>Categories</h3>
+<ul *ngIf="categories.length > 0; else noCategories">
+  <li *ngFor="let category of categories">
+    <a [routerLink]="['/category', category]">{{ category }}</a>
+  </li>
+</ul>
+
+<ng-template #noCategories>
+  <p>No categories available.</p>
+</ng-template>

@@ -1,18 +1,11 @@
 import { bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app/app.component';
-import { appStoreProviders } from './app/store/app.store';
-import { provideHttpClient } from '@angular/common/http'; 
-import { CategoriesEffects } from './app/features/categories/store/categories.effects';
-import { provideEffects } from '@ngrx/effects';
-import { provideState, provideStore } from '@ngrx/store'
-import { categoriesReducer } from './app/features/categories/store/categories.reducer';
+import { routes } from './app/app.routes';
+import { provideStore } from '@ngrx/store';
+import { expenseReducer } from './app/state/expense.reducer';
+import { provideHttpClient } from '@angular/common/http';
+import { appConfig } from './app/app.config';
 
-bootstrapApplication(AppComponent, {
-  providers: [appStoreProviders, 
-    provideHttpClient(),
-    provideStore(),
-    provideState('categories', categoriesReducer),
-    provideEffects(CategoriesEffects)
-  ]
-}).catch(err => console.error(err));
-
+bootstrapApplication(AppComponent,appConfig)
+.catch(err => console.error(err));

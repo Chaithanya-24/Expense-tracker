@@ -1,0 +1,12 @@
+
+<h2>Expenses for Category: {{ category }}</h2>
+
+<ul *ngIf="filteredExpenses$ | async as expenses; else noExpenses">
+  <li *ngFor="let expense of expenses">
+    {{ expense.title }} - ${{ expense.amount }}
+  </li>
+</ul>
+
+<ng-template #noExpenses>
+  <p>No expenses found for this category.</p>
+</ng-template>
