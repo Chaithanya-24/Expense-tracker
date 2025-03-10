@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Expense } from '../../state/expense.model';
+import { Expense } from '../../store/expense.model';
 import { CommonModule } from '@angular/common';
 import { Router } from 'express';
 
@@ -20,8 +20,17 @@ export class ExpenseDetailsComponent implements OnInit {
 
   ngOnInit() {
     const expenseId = Number(this.route.snapshot.paramMap.get('id'));
-    this.store.select('expenses').subscribe((expenses: Expense[]) => {
-      this.expense = expenses.find((e) => e.id === expenseId);
+  
+    this.store.select('expenses').subscribe((state: any) => {
+      console.log("Expenses from Store:", state); // Debugging log
+      if (state && Array.isArray(state.expenses)) {
+        this.expense = state.expenses.find((e: Expense) => e.id === expenseId);
+      } else {
+        console.error("Error: Expected 'state.expenses' to be an array, but got:", state);
+        this.expense = undefined;
+      }
     });
+    
   }
+  
 }

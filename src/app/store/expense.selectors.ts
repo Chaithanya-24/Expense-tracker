@@ -7,7 +7,16 @@ export const selectExpenseState = createFeatureSelector<ExpenseState>('expenses'
 // Select all expenses
 export const selectAllExpenses = createSelector(
   selectExpenseState,
-  (state) => state.expenses
+  (state) => {
+    const seenIds = new Set();
+    return state.expenses.filter(expense => {
+      if (seenIds.has(expense.id)) {
+        return false;
+      }
+      seenIds.add(expense.id);
+      return true;
+    });
+  }
 );
 
 // Select an expense by ID

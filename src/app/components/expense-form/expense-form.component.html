@@ -46,17 +46,18 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-expense>
-        <tr>
-            <!-- <td>{{ expense.title }}</td>
-            <td>{{ expense.amount | currency: 'USD' }}</td>
+        <tr *ngFor="let expense of expenses$ | async">
+            <td>{{ expense.title }}</td>
+            <td>{{ expense.amount | currency: 'INR' }}</td>
             <td>{{ expense.category }}</td>
-            <td>{{ expense.date }}</td> -->
+            <td>{{ expense.date }}</td>
+            <!-- <td>Hi</td>
             <td>Hi</td>
             <td>Hi</td>
-            <td>Hi</td>
-            <td>Hi</td>
+            <td>Hi</td> -->
             <td>
                 <p-button icon="pi pi-pencil" class="mr-2" (click)="editExpense(expense)" />
+
                 <p-button icon="pi pi-trash" severity="danger" (click)="deleteExpense(expense.id)" />
             </td>
         </tr>

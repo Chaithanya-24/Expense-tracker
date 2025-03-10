@@ -1,24 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ExpenseListComponent } from '../expense-list/expense-list.component';
-import { CategoryListComponent } from "../category-list/category-list.component";
-import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule,
-    RouterModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  imports: [CommonModule, RouterModule],
 })
 export class HomeComponent implements OnInit {
+  private http = inject(HttpClient);
   categories: string[] = [];
 
-  constructor() { }
+  ngOnInit() {
+    this.fetchCategories();
+  }
 
-  ngOnInit(): void {
-    // Initialize categories here if needed
+  fetchCategories() {
+    this.http.get<string[]>('https://fakestoreapi.com/products/categories').subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (err) => {
+        console.error('Error fetching categories:', err);
+      },
+    });
   }
 }

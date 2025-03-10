@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { Expense } from '../../state/expense.model';
-import { selectAllExpenses } from '../../state/expense.selectors';
+import { Expense } from '../../store/expense.model';
+import { selectAllExpenses } from '../../store/expense.selectors';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 

@@ -8,9 +8,10 @@ export interface ExpenseState {
 }
 
 const initialState: ExpenseState = {
-  expenses: [],
-};
-
+    expenses: [] // ✅ An object with an array property
+  };
+  
+  
 // Reducer function
 export const expenseReducer = createReducer(
   initialState,
@@ -31,10 +32,11 @@ export const expenseReducer = createReducer(
     ...state,
     expenses: state.expenses.map((e) => (e.id === expense.id ? expense : e))
   })),
-  
+
   // Remove an expense
   on(deleteExpense, (state, { id }) => ({
     ...state,
     expenses: state.expenses.filter(exp => exp.id !== id),
   }))
 );
+// console.log statement removed as 'expenses' is not defined in this scope

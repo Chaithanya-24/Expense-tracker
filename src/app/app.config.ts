@@ -4,7 +4,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideRouter } from '@angular/router';
 import { provideStore } from '@ngrx/store';
 import { routes } from './app.routes';
-import { expenseReducer } from './state/expense.reducer';
+import { expenseReducer } from './store/expense.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), 
