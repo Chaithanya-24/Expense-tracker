@@ -1,8 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Expense } from '../../store/expense.model';
 import { addExpense, updateExpense, deleteExpense, loadExpenses } from '../../store/expense.actions';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { selectAllExpenses } from '../../store/expense.selectors';
@@ -12,12 +12,14 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { CalendarModule } from 'primeng/calendar';
-import { DropdownModule } from 'primeng/dropdown';
+// import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageModule } from 'primeng/message';
-import { LocalStorageService } from '../../services/local-storage.service'; // ✅ Import LocalStorageService
+import { LocalStorageService } from '../../services/local-storage.service';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-expense-form',
@@ -25,15 +27,29 @@ import { LocalStorageService } from '../../services/local-storage.service'; // �
   templateUrl: './expense-form.component.html',
   styleUrls: ['./expense-form.component.css'],
   imports: [
-    FormsModule, CommonModule, ToolbarModule, ButtonModule, DialogModule,
-    InputTextModule, CalendarModule, DropdownModule, TableModule,
-    ToastModule, ConfirmDialogModule, MessageModule
+    FormsModule, 
+    RouterModule,
+    CommonModule, 
+    ToolbarModule, 
+    ButtonModule, 
+    DialogModule,
+    InputTextModule, 
+    CalendarModule, 
+    SelectModule, 
+    TableModule,
+    ToastModule, 
+    ConfirmDialogModule, 
+    MessageModule,
+    ReactiveFormsModule
   ],
 })
 export class ExpenseFormComponent implements OnInit {
   private store = inject(Store);
   private http = inject(HttpClient);
-  private localStorageService = inject(LocalStorageService); // ✅ Use local storage service
+  private localStorageService = inject(LocalStorageService);
+  private router = inject(Router); // Inject the Router service
+  @Output() formClosed = new EventEmitter<void>();  // Event to notify parent component
+
 
   expenses$: Observable<Expense[]> = this.store.select(selectAllExpenses);
   categories: string[] = []; 
@@ -60,7 +76,6 @@ export class ExpenseFormComponent implements OnInit {
     });
   }
   
-  
   fetchCategories() {
     this.http.get<string[]>('https://fakestoreapi.com/products/categories').subscribe({
       next: (data) => {
@@ -76,37 +91,48 @@ export class ExpenseFormComponent implements OnInit {
     this.categoryDialog = true;
   }
 
+  closeCategoryDialog() {
+    this.categoryDialog = false;
+  }
+
   filterExpenses() {
     this.expenses$.pipe(take(1)).subscribe(expenses => {
       this.filteredExpenses = expenses.filter(expense => expense.category === this.selectedCategory);
     });
   }
 
-  saveExpense() {
-    if (!this.expense || !this.expense.title || !this.expense.amount || !this.expense.category) {
-      return; // Prevent adding empty expense
+  onSubmit() {
+    if (!this.expense.title || !this.expense.amount || !this.expense.category) {
+      return; // Prevent adding empty or incomplete expenses
     }
-  
+
     this.expenses$.pipe(take(1)).subscribe(expenses => {
-      const existingExpense = expenses.find(exp => exp.id === this.expense.id);
-  
-      if (existingExpense) {
+      if (this.editingId !== null) {
+        // Update existing expense
         this.store.dispatch(updateExpense({ expense: this.expense }));
       } else {
-        this.expense.id = Math.floor(Math.random() * 1000);
-        this.store.dispatch(addExpense({ expense: this.expense }));
+        // Add new expense
+        const newExpense: Expense = {
+          id: Math.floor(Math.random() * 10000), // Generate a random unique ID
+          title: this.expense.title,
+          amount: this.expense.amount,
+          category: this.expense.category,
+          date: this.expense.date || new Date().toISOString().split('T')[0] // Default to today's date
+        };
+
+        this.store.dispatch(addExpense({ expense: newExpense }));
+
+        // Update localStorage
+        const updatedExpenses = [...expenses, newExpense];
+        this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses));
       }
-  
-      // ✅ Save only unique expenses to localStorage
-      const updatedExpenses = [...expenses.filter(exp => exp.id !== this.expense.id), this.expense];
-      this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses));
-  
+        this.formClosed.emit(); // Notify parent component
       this.resetForm();
+      this.router.navigate(['/expenses']); // Use the router to navigate
     });
   }
-  
 
-  editExpense(expense: Expense) {
+  updateExpense(expense: Expense) {
     this.expense = { ...expense };
     this.editingId = expense.id;
   }
@@ -114,7 +140,7 @@ export class ExpenseFormComponent implements OnInit {
   deleteExpense(id: number) {
     this.store.dispatch(deleteExpense({ id }));
 
-    // ✅ Update localStorage after deleting
+    // Update localStorage after deleting
     this.expenses$.pipe(take(1)).subscribe(expenses => {
       const updatedExpenses = expenses.filter(expense => expense.id !== id);
       this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses));

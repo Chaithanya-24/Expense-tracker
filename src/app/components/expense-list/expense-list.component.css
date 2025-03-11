@@ -1,0 +1,25 @@
+/* Increase Table Size */
+.custom-table {
+    width: 90% !important;
+    height: 400px !important;
+    margin: auto;
+  }
+  
+  /* Style Action Icons */
+  .edit-btn {
+    background-color: #ffc107 !important; /* Yellow */
+    color: black !important;
+    border: none;
+  }
+  
+  .delete-btn {
+    background-color: #dc3545 !important; /* Red */
+    color: white !important;
+    border: none;
+  }
+  
+  /* Change Icon Colors */
+  .pi {
+    font-size: 1.2rem !important;
+  }
+  

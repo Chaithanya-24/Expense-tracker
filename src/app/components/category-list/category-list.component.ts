@@ -31,7 +31,7 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  viewCategoryExpenses(category: string) {
-    this.router.navigate([`/category/${category}`]); // Navigate to category expenses page
-  }
+  // viewCategoryExpenses(category: string) {
+  //   this.router.navigate([`/category/${category}`]); // Navigate to category expenses page
+  // }
 }

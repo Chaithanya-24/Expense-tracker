@@ -1,6 +1,55 @@
 p-button{
     padding: 10px
 }
-tr{
+.p-dialog {
+    width: 500px !important;  /* Increase width */
+    max-width: 90%;
+  }
+  
+  .p-dialog-content {
+    max-height: 1000px;  /* Increase max height */
+    overflow-y: auto;   /* Enable scrolling */
+  }
+  /* Increase modal size */
+.modal-dialog {
+    max-width: 600px; /* Adjust width */
+    width: 90%; /* Ensure responsiveness */
+  }
+  
+  .modal-content {
+    padding: 20px; /* Add more spacing */
+    font-size: 1.2rem; /* Increase text size */
+  }
+  
+  /* Increase input field size */
+  .modal-body input,
+  .modal-body select {
+    font-size: 1.1rem;
     padding: 10px;
-}
+    width: 100%;
+  }
+  
+  /* Adjust save button */
+  .modal-footer .btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+  }
+
+  /* Make the dropdown expand outside the modal */
+.p-dropdown-panel {
+    max-height: none !important; /* Remove height restriction */
+    overflow-y: visible !important; /* Ensure visibility */
+  }
+  
+  /* If using Bootstrap select */
+  select {
+    position: relative;
+    z-index: 1050; /* Ensure dropdown appears above modal */
+  }
+  
+  /* Increase modal height dynamically */
+  .modal-content {
+    min-height: 400px; /* Adjust as needed */
+  }
+  
+  

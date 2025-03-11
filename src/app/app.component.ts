@@ -6,6 +6,7 @@ import { ExpenseListComponent } from "./components/expense-list/expense-list.com
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [RouterOutlet, ExpenseFormComponent, ExpenseListComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

@@ -1,6 +1,31 @@
-<h2>Expense List</h2>
-<ul>
-  <li *ngFor="let expense of expenses$ | async">
-    <a [routerLink]="['/expense', expense.id]">{{ expense.title }}</a>
-  </li>
-</ul>
+<button pButton label="Add Expense" icon="pi pi-plus" (click)="showDialog()"></button>
+
+<p-table [value]="(expenses$ | async) ?? []" [paginator]="true" [rows]="5">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Title</th>
+      <th>Amount</th>
+      <th>Category</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-expense>
+    <tr>
+      <td>{{ expense.title }}</td>
+      <td>{{ expense.amount | currency:'INR' }}</td>
+      <td>{{ expense.category }}</td>
+      <td>{{ expense.date }}</td>
+      <td>
+        <button pButton icon="pi pi-pencil" (click)="onUpdateExpense(expense)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-danger" (click)="onDelete(expense.id)"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- PrimeNG Dialog for Expense Form -->
+<p-dialog [(visible)]="displayForm" header="Add Expense" [modal]="true" [closable]="true">
+  <app-expense-form (formClosed)="closeDialog()"></app-expense-form>
+</p-dialog>
