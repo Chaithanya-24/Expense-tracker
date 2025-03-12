@@ -1,4 +1,4 @@
-import { Component, inject, NgModule } from '@angular/core';
+import { Component, inject, NgModule, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Expense } from '../../store/expense.model';
@@ -8,12 +8,14 @@ import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
+import { selectAllCategories } from '../../store/category.selectors';
 import { ExpenseFormComponent } from '../expense-form/expense-form.component';
-import { deleteExpense, updateExpense } from '../../store/expense.actions';
+import { deleteExpense } from '../../store/expense.actions';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
+import { loadCategories } from '../../store/category.actions';
 
 @Component({
   selector: 'app-expense-list',
@@ -22,7 +24,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './expense-list.component.html',
   styleUrls: ['./expense-list.component.css']
 })
-export class ExpenseListComponent {
+export class ExpenseListComponent implements OnInit{
   private store = inject(Store);
   private router = inject(Router);
   expenses$: Observable<Expense[]> = this.store.select(selectAllExpenses);
@@ -31,7 +33,7 @@ export class ExpenseListComponent {
   selectedExpense: Expense | null = null; 
   selectedCategory: string | null = null;
   categories: string[] = []; 
- 
+  categories$: Observable<string[]> = this.store.select(selectAllCategories);
 
   showDialog(expense?: Expense) {
     if (expense) {
@@ -61,6 +63,9 @@ export class ExpenseListComponent {
     this.showDialog(expense); // Open dialog in edit mode
   }
 
+  ngOnInit() {
+    this.store.dispatch(loadCategories()); // Fetch categories on component load
+  }
   onAddExpense() {
     this.router.navigate(['/add-expense']);
   }
