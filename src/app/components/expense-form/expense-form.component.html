@@ -1,163 +1,44 @@
-
-<!-- PrimeNG Dialog -->
-<!-- <p-dialog [(visible)]="categoryDialog" [modal]="true" [header]="'New Category'" [closable]="true" [dismissableMask]="true" (onHide)="closeCategoryDialog()">
-  <div class="p-fluid">
-    <div class="p-field">
-      <label for="categoryName">Category Name</label>
-      <input id="categoryName" type="text" pInputText>
-    </div>
-    <div class="p-field">
-      <button pButton label="Save" class="p-button-primary" (click)="closeCategoryDialog()"></button>
-      <button pButton label="Cancel" class="p-button-secondary" (click)="closeCategoryDialog()"></button>
-    </div>
-  </div>
-</p-dialog> -->
-
-<!-- 
-<form (submit)="saveExpense()">
-  <label>Title:</label>
-  <input type="text" [(ngModel)]="expense.title" name="title" required />
-
-  <label>Amount:</label>
-  <input type="number" [(ngModel)]="expense.amount" name="amount" required />
-
-  <label>Category:</label>
-  <select [(ngModel)]="expense.category" name="category">
-    <option *ngFor="let category of categories" [value]="category">
-      {{ category }}
-    </option>
-  </select>
-
-  <label>Date:</label>
-  <input type="date" [(ngModel)]="expense.date" name="date" />
-
-  <button type="submit">
-    {{ editingId !== null ? 'Update Expense' : 'Add Expense' }}
-  </button>
-</form>
-
-<h2>Expense List</h2> -->
-
-<!-- PrimeNG Table -->
-<!-- <p-table
-    #dt
-    [value]="(expenses$ | async) ?? []"
-    [rows]="10"
-    [paginator]="true"
-    responsiveLayout="scroll"
->
-    <ng-template pTemplate="header">
-        <tr>
-            <th>Title</th>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Date</th>
-            <th>Actions</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-expense>
-        <tr>
-            <td>{{ expense.title }}</td>
-            <td>{{ expense.amount | currency: 'INR' }}</td>
-            <td>{{ expense.category }}</td>
-            <td>{{ expense.date }}</td> -->
-            <!-- <td>Hi</td>
-            <td>Hi</td>
-            <td>Hi</td>
-            <td>Hi</td> -->
-            <!-- <td>
-                <p-button icon="pi pi-pencil" class="mr-2" (click)="editExpense(expense)" />
-
-                <p-button icon="pi pi-trash" class="p-button-danger" severity="danger" (click)="deleteExpense(expense.id)" />
-            </td>
-        </tr>
-    </ng-template>
-</p-table> -->
-
-<!-- Expense List Dialog -->
-<!-- <p-dialog [(visible)]="categoryDialog" [style]="{ width: '600px' }" header="Expenses by Category" [modal]="true">
-    <ng-template #content>
-        <div class="flex flex-col gap-6">
-            <label for="categoryFilter">Select Category</label>
-            <p-dropdown
-                id="categoryFilter"
-                [(ngModel)]="selectedCategory"
-                [options]="categories"
-                placeholder="Choose a Category"
-                (onChange)="filterExpenses()"
-            ></p-dropdown>
-
-            <p-table
-                *ngIf="filteredExpenses.length > 0"
-                [value]="filteredExpenses"
-                [paginator]="true"
-                [rows]="5"
-                responsiveLayout="scroll"
-            >
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Title</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-expense>
-                    <tr>
-                        <td>{{ expense.title }}</td>
-                        <td>{{ expense.amount | currency: 'USD' }}</td>
-                        <td>{{ expense.date }}</td>
-                    </tr>
-                </ng-template>
-            </p-table> -->
-
-            <!-- <p-message *ngIf="filteredExpenses.length === 0" severity="info" text="No expenses found for this category."></p-message>
+<div class="expense-form-container">
+    <h2 *ngIf="isEditMode">Edit Expense</h2>
+    <h2 *ngIf="!isEditMode">Add Expense</h2>
+  
+    <form (ngSubmit)="onSubmit()" #expenseForm="ngForm">
+      <div class="p-fluid">
+        <!-- Title Input -->
+        <div class="p-field">
+          <label for="title">Title</label>
+          <input id="title" type="text" pInputText [(ngModel)]="expense.title" name="title" required />
         </div>
-    </ng-template>
-
-    <ng-template #footer>
-        <p-button label="Close" icon="pi pi-times" text (click)="categoryDialog = false" />
-    </ng-template>
-</p-dialog> -->
-
-<form (ngSubmit)="onSubmit()" #expenseForm="ngForm">
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="title">Title</label>
-        <input id="title" type="text" pInputText [(ngModel)]="expense.title" name="title" required />
+  
+        <!-- Amount Input -->
+        <div class="p-field">
+          <label for="amount">Amount</label>
+          <input id="amount" type="number" pInputText [(ngModel)]="expense.amount" name="amount" required />
+        </div>
+  
+        <!-- Category Dropdown -->
+        <div class="p-field">
+          <label for="category">Category</label>
+          <p-dropdown 
+            [options]="categoryOptions" 
+            [(ngModel)]="expense.category" 
+            name="category"
+            placeholder="Select a category" required>
+          </p-dropdown>
+        </div>
+  
+        <!-- Date Input -->
+        <div class="p-field">
+          <label for="date">Date</label>
+          <input type="date" id="date" [(ngModel)]="expense.date" name="date" class="p-inputtext p-component" required />
+        </div>
       </div>
   
-      <div class="p-field">
-        <label for="amount">Amount</label>
-        <input id="amount" type="number" pInputText [(ngModel)]="expense.amount" name="amount" required />
+      <!-- Form Buttons -->
+      <div class="p-dialog-footer">
+        <button pButton type="submit" label="Save Expense" class="p-button-primary"></button>
+        <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="closeDialog()"></button>
       </div>
-  
-      <div class="p-field">
-        <label for="category">Category</label>
-        <p-select [options]="categories" [(ngModel)]="expense.category" name="category" placeholder="Select a category"></p-select>
-      </div>
-      <div>
-        <label for="date">Date</label>
-        <input type="date" id="date" [(ngModel)]="expense.date" name ="date"class="p-inputtext p-component" />
-      </div>
-  
-      <button pButton type="submit" label="Save"></button>
-    </div>
-  </form>
-
-  <!-- <form (ngSubmit)="updateExpense(expense)">
-    <label>Title:</label>
-    <input type="text" [(ngModel)]="expense.title" name="title" required />
-  
-    <label>Amount:</label>
-    <input type="number" [(ngModel)]="expense.amount" name="amount" required />
-  
-    <label>Category:</label>
-    <input type="text" [(ngModel)]="expense.category" name="category" required />
-  
-    <label>Date:</label>
-    <input type="date" [(ngModel)]="expense.date" name="date" required />
-  
-    <button type="submit">Update Expense</button>
-  </form> -->
-  
+    </form>
+  </div>
   

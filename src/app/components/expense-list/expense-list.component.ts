@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Expense } from '../../store/expense.model';
 import { selectAllExpenses } from '../../store/expense.selectors';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -14,7 +14,7 @@ import { deleteExpense, updateExpense } from '../../store/expense.actions';
 @Component({
   selector: 'app-expense-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, DialogModule, ExpenseFormComponent],
+  imports: [CommonModule, TableModule, ButtonModule, DialogModule, ExpenseFormComponent, RouterModule],
   templateUrl: './expense-list.component.html',
   styleUrls: ['./expense-list.component.css']
 })
@@ -23,20 +23,36 @@ export class ExpenseListComponent {
   private router = inject(Router);
   expenses$: Observable<Expense[]> = this.store.select(selectAllExpenses);
   displayForm: boolean = false;  // Controls the dialog visibility
+  displayDialog: boolean = false;
+  selectedExpense: Expense | null = null;  
 
-  showDialog() {
-    this.displayForm = true;
+  showDialog(expense?: Expense) {
+    if (expense) {
+      this.selectedExpense = { ...expense }; // Clone to prevent direct mutation
+    } else {
+      this.selectedExpense = null; // New expense
+    }
+    this.displayDialog = true;
   }
+
 
   closeDialog() {
-    this.displayForm = false;
+    this.displayDialog = false;
+    this.selectedExpense = null;
+  }
+  onUpdateExpense(expense: Expense) {
+    this.showDialog(expense); // Open dialog in edit mode
   }
 
-  onUpdateExpense(expense: Expense) {
-    this.store.dispatch(updateExpense({ expense }));
-    this.router.navigate(['/edit-expense', expense.id]); // Redirect after updating         
-    // this.router.navigate(['/expenses']); // Redirect after updating
+  onAddExpense() {
+    this.router.navigate(['/add-expense']);
   }
+
+  // onUpdateExpense(expense: Expense) {
+  //   this.store.dispatch(updateExpense({ expense }));
+  //   this.router.navigate(['/edit-expense', expense.id]); // Redirect after updating         
+  //   // this.router.navigate(['/expenses']); // Redirect after updating
+  // }
 
   onDelete(id: number) {
     this.store.dispatch(deleteExpense({ id }));
