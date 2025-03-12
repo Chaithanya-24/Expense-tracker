@@ -4,17 +4,19 @@ import { Observable } from 'rxjs';
 import { Expense } from '../../store/expense.model';
 import { selectAllExpenses } from '../../store/expense.selectors';
 import { Router, RouterModule } from '@angular/router';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { ExpenseFormComponent } from '../expense-form/expense-form.component';
 import { deleteExpense, updateExpense } from '../../store/expense.actions';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 @Component({
   selector: 'app-expense-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, DialogModule, ExpenseFormComponent, RouterModule],
+  imports: [CommonModule, TableModule, ButtonModule, DialogModule, ExpenseFormComponent, RouterModule, IconFieldModule, InputIconModule],
   templateUrl: './expense-list.component.html',
   styleUrls: ['./expense-list.component.css']
 })
@@ -35,7 +37,11 @@ export class ExpenseListComponent {
     this.displayDialog = true;
   }
 
-
+  filterExpenses(event: any, dt: Table | null) {
+    if (dt) {
+      dt.filterGlobal(event.target.value, 'contains');
+    }
+  }
   closeDialog() {
     this.displayDialog = false;
     this.selectedExpense = null;

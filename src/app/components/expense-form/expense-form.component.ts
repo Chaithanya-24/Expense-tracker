@@ -318,6 +318,7 @@ export class ExpenseFormComponent implements OnInit {
       }
 
       this.closeDialog(); // Close only after successful add/update
+      this.router.navigate(['/expenses']);
     });
   }
 
@@ -325,6 +326,7 @@ export class ExpenseFormComponent implements OnInit {
     this.displayDialog = false;
     this.expense = { id: 0, title: '', amount: 0, category: '', date: '' }; // Reset form
     this.formClosed.emit();
+    this.router.navigate(['/expenses']);
   }
 
   showAddExpenseDialog() {

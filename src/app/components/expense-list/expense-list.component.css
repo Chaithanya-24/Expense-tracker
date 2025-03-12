@@ -22,4 +22,26 @@
   .pi {
     font-size: 1.2rem !important;
   }
+
+  .search-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Aligns search to the right */
+    margin-bottom: 10px;
+  }
+  
+  .search-container input {
+    width: 250px; /* Set input width */
+    margin-right: 8px;
+    padding: 5px;
+  }
+  
+  .search-btn {
+    height: 36px;
+  }
+  
+  .p-input-icon-left input {
+   padding-left: 40px; /*Adjust padding to prevent overlap  */
+    width: 100%;
+  } 
   

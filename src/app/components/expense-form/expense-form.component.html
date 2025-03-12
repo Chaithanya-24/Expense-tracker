@@ -1,6 +1,5 @@
 <div class="expense-form-container">
-    <h2 *ngIf="isEditMode">Edit Expense</h2>
-    <h2 *ngIf="!isEditMode">Add Expense</h2>
+    
   
     <form (ngSubmit)="onSubmit()" #expenseForm="ngForm">
       <div class="p-fluid">
@@ -36,7 +35,7 @@
   
       <!-- Form Buttons -->
       <div class="p-dialog-footer">
-        <button pButton type="submit" label="Save Expense" class="p-button-primary"></button>
+        <button pButton type="submit" label="Save Expense" class="p-button-primary" ></button>
         <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="closeDialog()"></button>
       </div>
     </form>
