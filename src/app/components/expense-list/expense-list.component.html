@@ -21,7 +21,15 @@
     <tr>
       <th>Title</th>
       <th>Amount</th>
-      <th>Category</th>
+      <th>
+        Category
+        <p-dropdown 
+    [options]="categories" 
+    placeholder="Filter by Category" 
+    [(ngModel)]="selectedCategory" 
+    (onChange)="filterByCategory(dt)">
+  </p-dropdown>
+      </th>
       <th>Date</th>
       <th>Actions</th>
     </tr>

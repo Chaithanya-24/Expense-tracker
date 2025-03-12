@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, NgModule } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Expense } from '../../store/expense.model';
@@ -12,11 +12,13 @@ import { ExpenseFormComponent } from '../expense-form/expense-form.component';
 import { deleteExpense, updateExpense } from '../../store/expense.actions';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { DropdownModule } from 'primeng/dropdown';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-expense-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, DialogModule, ExpenseFormComponent, RouterModule, IconFieldModule, InputIconModule],
+  imports: [CommonModule, TableModule, ButtonModule, DialogModule, ExpenseFormComponent, RouterModule, IconFieldModule, InputIconModule, DropdownModule,FormsModule],
   templateUrl: './expense-list.component.html',
   styleUrls: ['./expense-list.component.css']
 })
@@ -26,7 +28,10 @@ export class ExpenseListComponent {
   expenses$: Observable<Expense[]> = this.store.select(selectAllExpenses);
   displayForm: boolean = false;  // Controls the dialog visibility
   displayDialog: boolean = false;
-  selectedExpense: Expense | null = null;  
+  selectedExpense: Expense | null = null; 
+  selectedCategory: string | null = null;
+  categories: string[] = []; 
+ 
 
   showDialog(expense?: Expense) {
     if (expense) {
@@ -40,6 +45,12 @@ export class ExpenseListComponent {
   filterExpenses(event: any, dt: Table | null) {
     if (dt) {
       dt.filterGlobal(event.target.value, 'contains');
+    }
+  }
+
+  filterByCategory(dt: Table | null) {
+    if (dt) {
+      dt.filter(this.selectedCategory || '', 'category', 'equals');
     }
   }
   closeDialog() {

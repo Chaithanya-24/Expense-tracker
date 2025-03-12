@@ -8,6 +8,9 @@ import { expenseReducer } from './store/expense.reducer';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import { categoryReducer } from './store/category.reducer';
+import { CategoryEffects } from './store/category.effects';
+import { provideEffects } from '@ngrx/effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), 
@@ -23,9 +26,10 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideStore({ expenses: expenseReducer }),
+    provideStore({ expenses: expenseReducer, categories: categoryReducer }),
     provideAnimationsAsync(),
     provideRouter(routes), 
     provideAnimationsAsync(),
+    provideEffects([CategoryEffects]),
     provideHttpClient()]
 };
