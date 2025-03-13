@@ -12,10 +12,10 @@
 </div>
 
 <p-table #dt
-[value]="(expenses$ | async) ?? []" 
+[value]="filteredExpenses ?? []" 
 [paginator]="true" 
 [globalFilterFields]="['title', 'category', 'amount', 'date']"
-[tableStyle]="{ 'min-width': '75rem' }"
+[tableStyle]="{ 'min-width': '75rem', 'height': '300px' }"
 [rows]="5">
   <ng-template pTemplate="header">
     <tr>
@@ -24,12 +24,17 @@
       <th>
         Category
         <p-dropdown 
-    [options]="categories" 
-    placeholder="Filter by Category" 
-    [(ngModel)]="selectedCategory" 
-    (onChange)="filterByCategory(dt)">
-  </p-dropdown>
+          [options]="categories" 
+          placeholder="Filter by Category" 
+          optionLabel="label" 
+          [showClear]="true" 
+          (onChange)="onCategoryChange($event.value)"
+          [style]="{ 'width': '150px', 'height': '30px', 'margin-left': '10px' }">
+        </p-dropdown>
       </th>
+      
+  <!-- <p>Selected Category: {{ selectedCategory }}</p> -->
+      
       <th>Date</th>
       <th>Actions</th>
     </tr>

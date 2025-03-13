@@ -44,4 +44,20 @@
    padding-left: 40px; /*Adjust padding to prevent overlap  */
     width: 100%;
   } 
+  .p-datatable-wrapper {
+    min-height: 300px; /* Adjust height as needed */
+  }
+  
+  .action-buttons {
+    height: 30px;
+    display: flex;
+    align-items: center;
+  }
+
+  table tbody tr {
+    height: 50px; /* Adjust as needed */
+    vertical-align: middle;
+  }
+  
+  
   
