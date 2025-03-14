@@ -307,8 +307,11 @@ export class ExpenseFormComponent implements OnInit {
           title: this.expense.title,
           amount: this.expense.amount,
           category: this.expense.category,
-          date: this.expense.date || new Date().toISOString().split('T')[0]
-        };
+          date: this.expense.date 
+          ? new Date(this.expense.date).toISOString() 
+          : new Date().toISOString(), // Default to current time if empty
+      };
+      
 
         this.store.dispatch(addExpense({ expense: newExpense }));
 

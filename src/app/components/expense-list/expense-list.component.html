@@ -12,11 +12,11 @@
 </div>
 
 <p-table #dt
-[value]="filteredExpenses ?? []" 
+[value]="filteredExpenses" 
 [paginator]="true" 
 [globalFilterFields]="['title', 'category', 'amount', 'date']"
 [tableStyle]="{ 'min-width': '75rem', 'height': '300px' }"
-[rows]="5">
+[rows]="10">
   <ng-template pTemplate="header">
     <tr>
       <th>Title</th>
@@ -26,10 +26,10 @@
         <p-dropdown 
           [options]="categories" 
           placeholder="Filter by Category" 
-          optionLabel="label" 
+          optionLabel="label"  
           [showClear]="true" 
           (onChange)="onCategoryChange($event.value)"
-          [style]="{ 'width': '150px', 'height': '30px', 'margin-left': '10px' }">
+          [style]="{ 'width': '150px', 'height': '30px', 'margin-left': '10px' }"> 
         </p-dropdown>
       </th>
       
@@ -45,12 +45,15 @@
       <td>{{ expense.title }}</td>
       <td>{{ expense.amount | currency:'INR' }}</td>
       <td>{{ expense.category }}</td>
-      <td>{{ expense.date | date }}</td>
+      <td>{{ expense.date | timeago }}</td>
       <td>
         <button pButton icon="pi pi-pencil" class="p-button-sm p-button-text"
           [routerLink]="['/edit-expense', expense.id]">
         </button>
-        <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="onDelete(expense.id)"></button>
+        <button pButton icon="pi pi-trash" 
+    class="p-button-danger p-button-sm" 
+    (click)="confirmDelete(expense.id)">
+</button>
       </td>
     </tr>
   </ng-template>
@@ -60,3 +63,6 @@
 <p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="true" header="Add Expense">
   <app-expense-form (formClosed)="closeDialog()"></app-expense-form>
 </p-dialog>
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast> <!-- To show delete success message -->
+

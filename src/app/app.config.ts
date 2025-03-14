@@ -1,5 +1,5 @@
 import { provideHttpClient } from '@angular/common/http';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideStore } from '@ngrx/store';
@@ -11,6 +11,7 @@ import Aura from '@primeng/themes/aura';
 import { categoryReducer } from './store/category.reducer';
 import { CategoryEffects } from './store/category.effects';
 import { provideEffects } from '@ngrx/effects';
+import { TimeagoModule } from 'ngx-timeago';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), 
@@ -31,5 +32,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes), 
     provideAnimationsAsync(),
     provideEffects([CategoryEffects]),
+    importProvidersFrom(TimeagoModule.forRoot()),
     provideHttpClient()]
 };
