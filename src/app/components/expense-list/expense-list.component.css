@@ -47,7 +47,7 @@
   .p-datatable-wrapper {
     min-height: 300px; /* Adjust height as needed */
   }
-  
+
   .action-buttons {
     height: 30px;
     display: flex;
@@ -57,6 +57,11 @@
   table tbody tr {
     height: 50px; /* Adjust as needed */
     vertical-align: middle;
+  }
+  
+  .p-confirm-dialog .p-dialog-header {
+    background-color: #ffcccc;
+    color: #d32f2f;
   }
   
   

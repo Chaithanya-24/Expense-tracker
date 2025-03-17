@@ -60,7 +60,9 @@
 </p-table>
 
 <!-- PrimeNG Dialog for Adding Expense -->
-<p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="true" header="Add Expense">
+<p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="true" [dismissableMask]="true" 
+header="Add Expense" 
+[style]="{ width: '400px', height: '420px' }" header="Add Expense">
   <app-expense-form (formClosed)="closeDialog()"></app-expense-form>
 </p-dialog>
 <p-confirmDialog></p-confirmDialog>

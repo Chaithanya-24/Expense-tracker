@@ -4,11 +4,13 @@ p-button{
 .p-dialog {
     width: 500px !important;  /* Increase width */
     max-width: 90%;
+    max-height: 100% !important; /* Adjust height dynamically */
+    overflow: hidden !important; /* Hide overflow */
   }
   
   .p-dialog-content {
     max-height: 1000px;  /* Increase max height */
-    overflow-y: auto;   /* Enable scrolling */
+    overflow-y: hidden;   /* Enable scrolling */
   }
   /* Increase modal size */
 .modal-dialog {
@@ -19,6 +21,7 @@ p-button{
   .modal-content {
     padding: 20px; /* Add more spacing */
     font-size: 1.2rem; /* Increase text size */
+    min-height: 400px; /* Adjust as needed */
   }
   
   /* Increase input field size */
@@ -47,9 +50,72 @@ p-button{
     z-index: 1050; /* Ensure dropdown appears above modal */
   }
   
-  /* Increase modal height dynamically */
-  .modal-content {
-    min-height: 400px; /* Adjust as needed */
+  
+  .expense-form {
+    display: flex;
+    flex-direction: column;
+    gap: 50px; /* Adds spacing between input fields */
   }
   
+  .p-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px; /* Ensures spacing between input fields */
+  }
   
+/* Adds space between the last input (Date) and the buttons */
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the bottom-right */
+  gap: 10px; /* Space between Save & Cancel buttons */
+  margin-top: 25px; /* Add space between inputs and buttons */
+}
+.p-field label {
+  margin-bottom: 5px; /* Space between label and input */
+  font-weight: 500;
+}
+
+.p-inputtext, 
+.p-dropdown, 
+.p-calendar {
+  width: 100% !important; /* Make all input fields same width */
+  padding: 8px;
+  box-sizing: border-box; /* Prevent width issues */
+}
+
+.p-float-label {
+  position: relative;
+  width: 100%;
+}
+
+.p-float-label input {
+  width: 100%;
+  padding: 12px 10px 6px; /* More top padding for label space */
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.p-float-label input:focus + label,
+.p-float-label input:not(:placeholder-shown) + label {
+  top: 5px;
+  font-size: 12px;
+  color: #007ad9;
+}
+
+.p-float-label label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #888;
+  transition: all 0.2s ease-in-out;
+  background: white;
+  padding: 0 4px; /* Adds spacing around label */
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+  display: none !important;
+}

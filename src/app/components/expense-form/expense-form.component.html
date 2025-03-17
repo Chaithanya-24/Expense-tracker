@@ -5,22 +5,39 @@
       <div class="p-fluid">
         <!-- Title Input -->
         <div class="p-field">
+            <p-floatlabel variant="on">
           <label for="title">Title</label>
-          <input id="title" type="text" pInputText [(ngModel)]="expense.title" name="title" required />
+          <input 
+          id="title" 
+          type="text" 
+          pInputText [(ngModel)]="expense.title" 
+          placeholder=" " 
+          name="title" 
+          pSize="large"  
+          required
+           />
+        </p-floatlabel>
         </div>
-  
         <!-- Amount Input -->
         <div class="p-field">
+        <p-floatlabel variant="on">
           <label for="amount">Amount</label>
-          <input id="amount" type="number" pInputText [(ngModel)]="expense.amount" name="amount" required />
+          <input 
+          id="amount" 
+          type="number" 
+          pInputText [(ngModel)]="expense.amount" 
+          name="amount" 
+          pSize="large"   
+          required />
+        </p-floatlabel>
         </div>
   
         <!-- Category Dropdown -->
         <div class="p-field">
-          <label for="category">Category</label>
+          <label for="category"></label>
           <p-dropdown 
             [options]="categoryOptions" 
-            [(ngModel)]="expense.category" 
+            [(ngModel)]="expense.category"
             name="category"
             placeholder="Select a category" required>
           </p-dropdown>
@@ -28,8 +45,14 @@
   
         <!-- Date Input -->
         <div class="p-field">
-          <label for="date">Date</label>
-          <input type="date" id="date" [(ngModel)]="expense.date" name="date" class="p-inputtext p-component" required />
+          <label for="date"></label>
+          <input 
+          type="date" 
+          id="date" 
+          [(ngModel)]="expense.date" 
+          name="date" 
+          class="p-inputtext p-component" 
+          pSize="large"   required />
         </div>
       </div>
   

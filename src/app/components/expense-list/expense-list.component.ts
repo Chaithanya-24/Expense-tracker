@@ -90,6 +90,7 @@ export class ExpenseListComponent implements OnInit{
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
+      dismissableMask: true, // ✅ Allows closing when clicking outside
       acceptButtonStyleClass: 'p-button-danger', // ✅ Red Delete Button
       rejectButtonStyleClass: 'p-button-secondary', // ✅ Grey Cancel Button
       accept: () => {
