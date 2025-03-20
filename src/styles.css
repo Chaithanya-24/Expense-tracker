@@ -1,1 +1,10 @@
 @import 'primeicons/primeicons.css';
+:root {
+    --font-family: Arial !important;
+  }
+  
+  /* Ensure all elements use the default font */
+  body, button, input, select, textarea, .p-component {
+    font-family: var(--font-family) !important;
+  }
+  

@@ -119,3 +119,12 @@ p-button{
 .p-dialog .p-dialog-header .p-dialog-header-icon {
   display: none !important;
 }
+
+body, button, input, select, textarea {
+  font-family: Arial; /* Uses the default sans-serif font of the browser */
+}
+
+/* Reset PrimeNG components */
+.p-component {
+  font-family: inherit !important; /* Forces PrimeNG to use browser default */
+}

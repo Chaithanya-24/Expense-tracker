@@ -1,5 +1,14 @@
 
-  h1{
-    text-align: center;
-    color: brown;
-  }
+.app-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: #B22222; /* Dark Red */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: "Georgia", serif;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #B22222;
+  display: inline-block;
+  padding-bottom: 5px;
+}

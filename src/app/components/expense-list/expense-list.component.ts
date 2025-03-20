@@ -1,4 +1,4 @@
-import { Component, inject, NgModule, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Expense } from '../../store/expense.model';
@@ -13,12 +13,18 @@ import { deleteExpense } from '../../store/expense.actions';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DropdownModule } from 'primeng/dropdown';
-import { FormsModule } from '@angular/forms';
+import {  FormsModule } from '@angular/forms';
 import { CategoryService } from '../../services/category.service';
 import { TimeagoModule } from 'ngx-timeago';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { DropdownChangeEvent } from 'primeng/dropdown'; // Import the correct type
+import { ChartModule } from 'primeng/chart';
+import { ChartData } from 'chart.js';
+import { ToolbarModule } from 'primeng/toolbar';
+import {  MenubarModule } from 'primeng/menubar';
+
 @Component({
   selector: 'app-expense-list',
   standalone: true,
@@ -35,25 +41,36 @@ import { ToastModule } from 'primeng/toast';
     ConfirmDialogModule,
     ToastModule,
     TimeagoModule,
+    ChartModule,
+    ToolbarModule,
+    MenubarModule,
     FormsModule],
   providers: [ConfirmationService, MessageService],
   templateUrl: './expense-list.component.html',
   styleUrls: ['./expense-list.component.css']
 })
 export class ExpenseListComponent implements OnInit{
+
+    // Placeholder for chart data, we will update it dynamically later
+    pieChartData: ChartData<'pie'> | undefined; // ✅ Use ChartData for Pie Chart
+    lineChartData: ChartData<'line'> | undefined; // ✅ Use ChartData for Line Chart
+
   private store = inject(Store);
   private router = inject(Router);
+  private categoryService = inject(CategoryService);
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
+
   expenses$: Observable<Expense[]> = this.store.select(selectAllExpenses);
   displayForm: boolean = false;  // Controls the dialog visibility
   displayDialog: boolean = false;
+  editDialogVisible: boolean = false; // Controls the Edit Expense Dialog
   selectedExpense: Expense | null = null; 
   selectedCategory: string | null = null;
   categories: { label: string; value: string }[] = [];
   expenses: Expense[] = [];
   filteredExpenses: Expense[] = [];
-  private categoryService = inject(CategoryService);
-  private confirmationService = inject(ConfirmationService);
-  private messageService = inject(MessageService);
+  updatedExpense: Expense [] = [];
 
 
 
@@ -66,9 +83,10 @@ export class ExpenseListComponent implements OnInit{
     this.displayDialog = true;
   }
 
-  filterExpenses(event: any, dt: Table | null) {
+  filterExpenses(event: Event, dt: Table | null) {
     if (dt) {
-      dt.filterGlobal(event.target.value, 'contains');
+      const inputElement = event.target as HTMLInputElement; // Type assertion for the target
+      dt.filterGlobal(inputElement.value, 'contains');
     }
   }
 
@@ -103,9 +121,24 @@ export class ExpenseListComponent implements OnInit{
     this.displayDialog = false;
     this.selectedExpense = null;
   }
-  onUpdateExpense(expense: Expense) {
-    this.showDialog(expense); // Open dialog in edit mode
+  
+  editExpense(expense: Expense) {
+    console.log('Editing expense:', expense);
+    this.selectedExpense = { ...expense };
+    this.editDialogVisible = true;
+    console.log('Dialog visibility:', this.editDialogVisible);
+}
+
+
+
+  handleExpenseUpdate(updatedExpense: Expense) {
+    const index = this.expenses.findIndex(exp => exp.id === updatedExpense.id);
+    if (index !== -1) {
+      this.expenses[index] = { ...updatedExpense }; // Update the specific expense
+    }
+    this.editDialogVisible = false; // Close the dialog
   }
+  
 
   ngOnInit() {
     this.store.select(selectAllExpenses).subscribe((data) => {
@@ -121,11 +154,13 @@ export class ExpenseListComponent implements OnInit{
       });
     
       this.filteredExpenses = [...this.expenses];
+      this.updatePieChart(); // Update the Pie Chart
+      this.updateLineChart(this.expenses); // Update the Line Chart
     });
     
   
-    this.categoryService.categories$.subscribe((data) => {
-      console.log('Categories fetched:', data); // Debugging
+    this.categoryService.categories$.subscribe((data:string[]) => {
+      // console.log('Categories fetched:', data); // Debugging
       this.categories = data.map(category => ({ 
         label: category.trim(), 
         value: category.trim().toLowerCase() 
@@ -137,9 +172,9 @@ export class ExpenseListComponent implements OnInit{
   
   
 
-  onCategoryChange(event: any) {
+  onCategoryChange(event: DropdownChangeEvent) {
     this.selectedCategory = event?.value || null;
-    console.log('Selected Category:', this.selectedCategory); // Debugging
+    // console.log('Selected Category:', this.selectedCategory); // Debugging
   
     if (this.selectedCategory) {
       this.filteredExpenses = this.expenses.filter(expense => 
@@ -151,15 +186,6 @@ export class ExpenseListComponent implements OnInit{
   }
   
   
-  onAddExpense() {
-    this.router.navigate(['/add-expense']);
-  }
-
-  // onUpdateExpense(expense: Expense) {
-  //   this.store.dispatch(updateExpense({ expense }));
-  //   this.router.navigate(['/edit-expense', expense.id]); // Redirect after updating         
-  //   // this.router.navigate(['/expenses']); // Redirect after updating
-  // }
 
   onDelete(id: number) {
     this.store.dispatch(deleteExpense({ id }));
@@ -171,6 +197,62 @@ export class ExpenseListComponent implements OnInit{
 
     // Show success message
     this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Expense deleted successfully' });
+  }
+
+  updatePieChart() {
+    const categoryTotals: { [key: string]: number } = {};
+  
+    // Calculate total expenses per category
+    this.expenses.forEach(expense => {
+      if (categoryTotals[expense.category]) {
+        categoryTotals[expense.category] += expense.amount;
+      } else {
+        categoryTotals[expense.category] = expense.amount;
+      }
+    });
+  
+    // Prepare data for the Pie Chart
+    this.pieChartData = {
+      labels: Object.keys(categoryTotals),
+      datasets: [
+        {
+          data: Object.values(categoryTotals),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800']
+        }
+      ]
+    };
+  }  
+  updateLineChart(expenses: Expense[]) {
+    const monthlyTotals: { [month: string]: number } = {};
+  
+    // Process each expense
+    expenses.forEach(expense => {
+      const month = new Date(expense.date).toLocaleString('en-US', { month: 'short', year: 'numeric' });
+  
+      if (!monthlyTotals[month]) {
+        monthlyTotals[month] = 0;
+      }
+      monthlyTotals[month] += expense.amount;
+    });
+  
+    // Extract labels and data
+    const labels = Object.keys(monthlyTotals).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+    const data = labels.map(month => monthlyTotals[month]);
+  
+    // Assign to chart
+    this.lineChartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Monthly Expenses',
+          data: data,
+          borderColor: '#42A5F5',
+          backgroundColor: 'rgba(66, 165, 245, 0.2)',
+          fill: true
+        }
+      ]
+    };
   }
   
 }

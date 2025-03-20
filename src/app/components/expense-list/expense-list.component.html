@@ -1,63 +1,81 @@
-<div>
-<button pButton label="Add Expense" icon="pi pi-plus" (click)="showDialog()"></button>
+<p-toolbar> 
+  <button pButton label="Add Expense" icon="pi pi-plus" class="add-button" (click)="showDialog()"></button>
 
-<div class="search-container">
-  <span class="p-input-icon-left">
-    <p-iconfield>
-    <p-inputicon styleClass="pi pi-search"></p-inputicon>
-    <input pInputText type="text" (input)="filterExpenses($event, dt)" placeholder="Search expenses..." />
-    </p-iconfield>
-  </span>
+  <div class="search-container">
+    <span class="p-input-icon-left">
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search"></p-inputicon>
+        <input pInputText type="text" (input)="filterExpenses($event, dt)" placeholder="Search expenses..." />
+      </p-iconfield>
+    </span>
+  </div>
+
+  <p-dropdown 
+    [options]="categories" 
+    placeholder="Filter by Category" 
+    optionLabel="label"  
+    [showClear]="true" 
+    (onChange)="onCategoryChange($event.value)"
+    class="category-dropdown">
+  </p-dropdown>
+</p-toolbar>
+
+<!-- Parent container for Table & Charts -->
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+
+  <!-- Expense Table (Flex: 3) -->
+  <div style="flex: 3; min-width: 600px;">
+    <p-table #dt
+      [value]="filteredExpenses" 
+      [paginator]="true" 
+      [globalFilterFields]="['title', 'category', 'amount', 'date']"
+      [tableStyle]="{ 'min-width': '75rem', 'height': '300px' }"
+      [rows]="10">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Title</th>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-expense>
+        <tr>
+          <td>{{ expense.title }}</td>
+          <td>{{ expense.amount | currency:'INR' }}</td>
+          <td>{{ expense.category }}</td>
+          <td>{{ expense.date | timeago }}</td>
+          <td>
+            <p-button 
+            icon="pi pi-pencil"
+            class="p-button-sm p-button-text"
+            (click)="editExpense(expense)"
+            ></p-button>
+
+            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="confirmDelete(expense.id)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Charts Container (Flex: 1) -->
+  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+    <!-- Pie Chart -->
+    <div style="width: 100%; max-width: 400px;">
+      <p-chart type="pie" [data]="pieChartData" [style]="{ width: '100%', height: '100%' }"></p-chart>
+    </div>
+
+    <!-- Line Chart -->
+    <div style="width: 100%; max-width: 400px;">
+      <p-chart type="line" [data]="lineChartData" [style]="{ width: '100%', height: '100%' }"></p-chart>
+    </div>
+  </div>
+
 </div>
-</div>
 
-<p-table #dt
-[value]="filteredExpenses" 
-[paginator]="true" 
-[globalFilterFields]="['title', 'category', 'amount', 'date']"
-[tableStyle]="{ 'min-width': '75rem', 'height': '300px' }"
-[rows]="10">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Title</th>
-      <th>Amount</th>
-      <th>
-        Category
-        <p-dropdown 
-          [options]="categories" 
-          placeholder="Filter by Category" 
-          optionLabel="label"  
-          [showClear]="true" 
-          (onChange)="onCategoryChange($event.value)"
-          [style]="{ 'width': '150px', 'height': '30px', 'margin-left': '10px' }"> 
-        </p-dropdown>
-      </th>
-      
-  <!-- <p>Selected Category: {{ selectedCategory }}</p> -->
-      
-      <th>Date</th>
-      <th>Actions</th>
-    </tr>
-  </ng-template>
-
-  <ng-template pTemplate="body" let-expense>
-    <tr>
-      <td>{{ expense.title }}</td>
-      <td>{{ expense.amount | currency:'INR' }}</td>
-      <td>{{ expense.category }}</td>
-      <td>{{ expense.date | timeago }}</td>
-      <td>
-        <button pButton icon="pi pi-pencil" class="p-button-sm p-button-text"
-          [routerLink]="['/edit-expense', expense.id]">
-        </button>
-        <button pButton icon="pi pi-trash" 
-    class="p-button-danger p-button-sm" 
-    (click)="confirmDelete(expense.id)">
-</button>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
 
 <!-- PrimeNG Dialog for Adding Expense -->
 <p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="true" [dismissableMask]="true" 
@@ -65,6 +83,24 @@ header="Add Expense"
 [style]="{ width: '400px', height: '420px' }" header="Add Expense">
   <app-expense-form (formClosed)="closeDialog()"></app-expense-form>
 </p-dialog>
+
+     <!-- PrimeNG Dialog for Editing Expense -->
+     <p-dialog [(visible)]="editDialogVisible" 
+    [modal]="true" 
+    [closable]="true" 
+    [dismissableMask]="true"
+    header="Edit Expense" 
+    [style]="{ width: '400px', height: '420px' }">
+
+    <app-expense-form 
+        [selectedExpense]="selectedExpense" 
+        (formClosed)="editDialogVisible = false"
+        (expenseSaved)="handleExpenseUpdate($event)">
+    </app-expense-form>
+
+</p-dialog>
+
+
 <p-confirmDialog></p-confirmDialog>
 <p-toast></p-toast> <!-- To show delete success message -->
 

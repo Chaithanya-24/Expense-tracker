@@ -5,12 +5,6 @@
     margin: auto;
   }
   
-  /* Style Action Icons */
-  .edit-btn {
-    background-color: #ffc107 !important; /* Yellow */
-    color: black !important;
-    border: none;
-  }
   
   .delete-btn {
     background-color: #dc3545 !important; /* Red */
@@ -63,6 +57,78 @@
     background-color: #ffcccc;
     color: #d32f2f;
   }
+  .expense-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+  }
   
+  .table-container {
+    flex: 2; /* Takes more space */
+  }
   
+  .charts-container {
+    flex: 1; /* Takes less space */
+    display: flex;
+    flex-direction: column; /* Stacks Pie and Line Chart */
+    gap: 20px;
+  }
+  
+  .chart-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Reduce column width */
+.p-table thead th {
+  width: auto; /* Adjust automatically */
+  padding: 8px 12px; /* Reduce padding */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Reduce row height */
+.p-table tbody tr {
+  height: 30px; /* Adjust height */
+}
+
+/* Reduce padding inside cells */
+.p-table tbody td {
+  padding: 6px 10px; /* Reduce padding */
+  font-size: 14px; /* Adjust text size if needed */
+}
+
+/* Styling the PrimeNG Toolbar */
+.top-toolbar {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Align search box and dropdown properly */
+.p-toolbar-group-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Make the dropdown uniform */
+.category-dropdown {
+  width: 180px;
+}
+/* Reset font to browser default */
+body, button, input, select, textarea {
+  font-family:Arial; 
+}
+
+/* Reset PrimeNG components */
+.p-component {
+  font-family: inherit !important; /* Forces PrimeNG to use browser default */
+}
+
   
