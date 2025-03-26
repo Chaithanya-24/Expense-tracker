@@ -30,7 +30,9 @@ export const expenseReducer = createReducer(
 
   on(updateExpense, (state, { expense }) => ({
     ...state,
-    expenses: state.expenses.map((e) => (e.id === expense.id ? expense : e))
+    expenses: state.expenses.map(exp =>
+      exp.id === expense.id ? { ...expense } : exp // ✅ Replace instead of appending
+    )
   })),
 
   // Remove an expense

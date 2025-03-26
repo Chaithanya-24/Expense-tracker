@@ -17,23 +17,48 @@
     font-size: 1.2rem !important;
   }
 
-  .search-container {
+  .search-container, .filter-container {
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Aligns search to the right */
-    margin-bottom: 10px;
-  }
-  
-  .search-container input {
-    width: 250px; /* Set input width */
-    margin-right: 8px;
-    padding: 5px;
-  }
-  
+    gap: 10px; /* Adjust spacing */
+}
+
+ .p-dropdown {
+    height: 45px !important; /* Ensure equal height */
+    width: 250px !important; /* Set equal width */
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    font-family:  inherit !important;
+    border-radius: 5px !important;
+    padding: 5px 12px !important;
+}
+ 
+.search-input{
+  height: 30px !important; /* Ensure equal height */
+  width: 150px !important; /* Set equal width */
+  font-size: 14px !important;
+  font-family: inherit !important;
+  border-radius: 5px !important;
+  padding: 5px 12px !important;
+}
   .search-btn {
     height: 36px;
   }
   
+  .add-expense-btn {
+    height: 42px !important; /* Ensure all elements have the same height */
+    font-size: 16px !important;
+    border-radius: 5px !important;
+    padding: 8px 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #17a2b8; /* Match theme */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
   .p-input-icon-left input {
    padding-left: 40px; /*Adjust padding to prevent overlap  */
     width: 100%;
@@ -123,7 +148,7 @@
 }
 /* Reset font to browser default */
 body, button, input, select, textarea {
-  font-family:Arial; 
+  font-family:inherit; 
 }
 
 /* Reset PrimeNG components */

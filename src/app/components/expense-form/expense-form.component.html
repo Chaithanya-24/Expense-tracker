@@ -1,6 +1,5 @@
 <p-toast position="top-right"></p-toast>
 <div class="expense-form-container">
-    
   
     <form (ngSubmit)="onSubmit()" #expenseForm="ngForm">
       <div class="p-fluid">
@@ -52,6 +51,7 @@
           id="date" 
           [(ngModel)]="expense.date" 
           name="date" 
+          dateFormat="dd-mm-yy"
           class="p-inputtext p-component" 
           pSize="large"   required />
         </div>
@@ -59,8 +59,9 @@
   
       <!-- Form Buttons -->
       <div class="p-dialog-footer">
-        <button pButton type="submit" label="Save Expense" class="p-button-primary" ></button>
         <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="closeDialog()"></button>
+        <button pButton type="submit" label="Save Expense" class="p-button-primary" ></button>
+        
       </div>
     </form>
   </div>

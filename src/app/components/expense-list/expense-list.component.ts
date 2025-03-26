@@ -24,6 +24,9 @@ import { ChartModule } from 'primeng/chart';
 import { ChartData } from 'chart.js';
 import { ToolbarModule } from 'primeng/toolbar';
 import {  MenubarModule } from 'primeng/menubar';
+import { SelectModule } from 'primeng/select';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-expense-list',
@@ -44,6 +47,9 @@ import {  MenubarModule } from 'primeng/menubar';
     ChartModule,
     ToolbarModule,
     MenubarModule,
+    SelectModule,
+    FloatLabelModule,
+    InputTextModule,
     FormsModule],
   providers: [ConfirmationService, MessageService],
   templateUrl: './expense-list.component.html',
@@ -72,8 +78,10 @@ export class ExpenseListComponent implements OnInit{
   filteredExpenses: Expense[] = [];
   updatedExpense: Expense [] = [];
 
-
-
+  updateLocalStorage() {
+    localStorage.setItem('expenses', JSON.stringify(this.expenses));
+  }
+  
   showDialog(expense?: Expense) {
     if (expense) {
       this.selectedExpense = { ...expense }; // Clone to prevent direct mutation
@@ -123,20 +131,28 @@ export class ExpenseListComponent implements OnInit{
   }
   
   editExpense(expense: Expense) {
-    console.log('Editing expense:', expense);
     this.selectedExpense = { ...expense };
+    if (!this.selectedExpense.id) {
+      this.selectedExpense.id = this.generateUniqueId();
+    }
     this.editDialogVisible = true;
-    console.log('Dialog visibility:', this.editDialogVisible);
-}
-
-
+  }
+  
+  generateUniqueId(): number {
+    if (!this.expenses || this.expenses.length === 0) {
+      return 1; // Start from 1 if the list is empty
+    }
+    const maxId = Math.max(...this.expenses.map(expense => expense.id));
+    return maxId + 1; // Assign the next unique number
+  }
+  
 
   handleExpenseUpdate(updatedExpense: Expense) {
-    const index = this.expenses.findIndex(exp => exp.id === updatedExpense.id);
-    if (index !== -1) {
-      this.expenses[index] = { ...updatedExpense }; // Update the specific expense
-    }
-    this.editDialogVisible = false; // Close the dialog
+    this.expenses = this.expenses.map(exp => 
+      exp.id === updatedExpense.id ? updatedExpense : exp
+    );
+    this.updateLocalStorage();
+    this.editDialogVisible = false;
   }
   
 
@@ -145,11 +161,11 @@ export class ExpenseListComponent implements OnInit{
       this.expenses = data.map(expense => {
         if (!expense.date || isNaN(Date.parse(expense.date))) {
           console.error("Invalid date detected:", expense.date);
-          return { ...expense, date: new Date().toISOString() }; // Assign current date if invalid
+          return { ...expense, date: new Date().toISOString().split('T')[0] }; // Assign current date if invalid
         }
         return { 
           ...expense, 
-          date: expense.date.includes('T') ? expense.date : new Date(expense.date).toISOString()
+          date: expense.date.includes('T') ? expense.date : new Date(expense.date).toISOString().split('T')[0]
         };
       });
     
@@ -169,7 +185,16 @@ export class ExpenseListComponent implements OnInit{
   
     this.categoryService.fetchCategories();
   }
+
+  getFormattedDate(date: string): string {
+    const today = new Date();
+    const givenDate = new Date(date);
+    const differenceInDays = Math.floor((today.getTime() - givenDate.getTime()) / (1000 * 3600 * 24));
   
+    return differenceInDays < 30 
+      ? date // Use timeago pipe in the template
+      : givenDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
   
 
   onCategoryChange(event: DropdownChangeEvent) {

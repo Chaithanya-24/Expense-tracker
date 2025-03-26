@@ -1,15 +1,5 @@
 <p-toolbar> 
   <button pButton label="Add Expense" icon="pi pi-plus" class="add-button" (click)="showDialog()"></button>
-
-  <div class="search-container">
-    <span class="p-input-icon-left">
-      <p-iconfield>
-        <p-inputicon styleClass="pi pi-search"></p-inputicon>
-        <input pInputText type="text" (input)="filterExpenses($event, dt)" placeholder="Search expenses..." />
-      </p-iconfield>
-    </span>
-  </div>
-
   <p-dropdown 
     [options]="categories" 
     placeholder="Filter by Category" 
@@ -18,6 +8,14 @@
     (onChange)="onCategoryChange($event.value)"
     class="category-dropdown">
   </p-dropdown>
+
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search"></p-inputicon>
+        <input pInputText type="text" 
+        (input)="filterExpenses($event, dt)"
+         placeholder="Search expenses..."  
+         pSize="large"/>
+      </p-iconfield>
 </p-toolbar>
 
 <!-- Parent container for Table & Charts -->
@@ -29,7 +27,7 @@
       [value]="filteredExpenses" 
       [paginator]="true" 
       [globalFilterFields]="['title', 'category', 'amount', 'date']"
-      [tableStyle]="{ 'min-width': '75rem', 'height': '300px' }"
+      [tableStyle]="{ 'width': '100%' }"
       [rows]="10">
       <ng-template pTemplate="header">
         <tr>
@@ -41,12 +39,15 @@
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="body" let-expense>
+      <ng-template pTemplate="body" let-expense of expenses>
         <tr>
           <td>{{ expense.title }}</td>
           <td>{{ expense.amount | currency:'INR' }}</td>
           <td>{{ expense.category }}</td>
-          <td>{{ expense.date | timeago }}</td>
+          <td >
+            {{ expense.date | timeago }}
+          </td>
+                 
           <td>
             <p-button 
             icon="pi pi-pencil"
@@ -63,17 +64,9 @@
 
   <!-- Charts Container (Flex: 1) -->
   <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-    <!-- Pie Chart -->
-    <div style="width: 100%; max-width: 400px;">
-      <p-chart type="pie" [data]="pieChartData" [style]="{ width: '100%', height: '100%' }"></p-chart>
-    </div>
-
-    <!-- Line Chart -->
-    <div style="width: 100%; max-width: 400px;">
-      <p-chart type="line" [data]="lineChartData" [style]="{ width: '100%', height: '100%' }"></p-chart>
-    </div>
+    <p-chart type="pie" [data]="pieChartData"  class="pie-chart"></p-chart>
+    <p-chart type="line" [data]="lineChartData"  class="line-chart"></p-chart>
   </div>
-
 </div>
 
 

@@ -17,6 +17,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-expense-form',
@@ -48,7 +49,7 @@ export class ExpenseFormComponent implements OnInit {
   @Output() formClosed = new EventEmitter<void>();
   @Output() expenseSaved = new EventEmitter<Expense>(); // Event to emit the saved expense
 
-  expenses$: Observable<Expense[]> = this.store.select(selectAllExpenses);
+  expenses$: Observable<Expense[]> = this.store.select(selectAllExpenses).pipe(distinctUntilChanged());
   categories: string[] = [];
   categoryOptions: { label: string; value: string }[] = [];
   expense: Expense = { id: 0, title: '', amount: 0, category: '', date: '' };
@@ -60,6 +61,7 @@ export class ExpenseFormComponent implements OnInit {
   // expenseForm!: FormGroup;
 
   ngOnInit() {
+    this.initForm(); // Ensure the form exists
     this.fetchCategories();
     this.loadExpensesFromLocalStorage();
   
@@ -72,6 +74,7 @@ export class ExpenseFormComponent implements OnInit {
           const foundExpense = expenses.find(exp => exp.id === this.editingId);
           if (foundExpense) {
             this.expense = { ...foundExpense };
+            this.expense.date = this.expense.date ? this.expense.date.split('T')[0] : '';  // Converts "2025-03-25T00:00:00.000Z" to "2025-03-25"
             this.displayDialog = true;
           }
         });
@@ -81,35 +84,33 @@ export class ExpenseFormComponent implements OnInit {
     });
   }
 
-  
-  // ngOnChanges() {
-  //   if (this.selectedExpense) {
-  //     this.expenseForm.patchValue(this.expense); // Pre-fill the form
-  //   }
-  // }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['expense'] && this.expenses$) {
+    if (changes['selectedExpense'] && this.selectedExpense) {
       if (!this.expenseForm) {
         this.initForm(); // Ensure form is initialized
       }
+      const formattedDate = this.formatDate(this.selectedExpense.date);
+
       if (this.selectedExpense) { // Add a null check
-        this.expenseForm.patchValue(this.selectedExpense);
+        this.expenseForm.patchValue({...this.selectedExpense, date: formattedDate,});
       }
+      this.expense = { ...this.selectedExpense }; // ✅ Copy selected expense
+      this.displayDialog = true; // Ensure dialog opens when editing
   }
+}
+
+formatDate(date: string): string {
+  return date ? new Date(date).toISOString().split('T')[0] : '';
 }
 
   initForm() {
     this.expenseForm = this.fb.group({
       title: [''],
-      amount: [0],
+      amount: [ ],
       category: [''],
       date: ['']
     });
-
-    if (this.expenses$) {
-      this.expenseForm.patchValue(this.expenses$);
-    }
   }
 
   
@@ -117,6 +118,8 @@ export class ExpenseFormComponent implements OnInit {
     const expenses = JSON.parse(localStorage.getItem('expenses') || '[]');
     this.expense = expenses.find((exp: { id: number; }) => exp.id === id) || {};
   }
+
+
   fetchCategories() {
     this.http.get<string[]>('https://fakestoreapi.com/products/categories').subscribe({
       next: (data) => {
@@ -148,43 +151,39 @@ export class ExpenseFormComponent implements OnInit {
   
     this.expenses$.pipe(take(1)).subscribe(expenses => {
       if (this.isEditMode && this.editingId !== null) {
-        // **Editing existing expense**
-        this.store.dispatch(updateExpense({ expense: this.expense }));
+        // **Find the index of the expense being edited**
+        const expenseIndex = expenses.findIndex(exp => exp.id === this.editingId);
   
-        // Update localStorage
-        const updatedExpenses = expenses.map(exp =>
-          exp.id === this.expense.id ? this.expense : exp
-        );
-        this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses));
-  
-        // ✅ Show success toast for update
-        this.messageService.add({ severity: 'success', summary: 'Expense Updated', detail: 'Expense updated successfully!' });
-  
+        if (expenseIndex !== -1) {
+          const updatedExpenses = [...expenses];
+          updatedExpenses[expenseIndex] = this.expense; // ✅ Replace instead of appending
+          this.store.dispatch(updateExpense({ expense: this.expense }));
+          this.store.select(selectAllExpenses).pipe(take(1)).subscribe(updatedExpenses => {
+          console.log("Updated expenses from store:", updatedExpenses);
+          });
+          this.messageService.add({ severity: 'success', summary: 'Expense Updated', detail: 'Expense updated successfully!' });
+          this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses)); // ✅ Correct local storage update
+        }
       } else {
+        const lastId = Number(localStorage.getItem('lastExpenseId') || '0') + 1;
+        localStorage.setItem('lastExpenseId', String(lastId));
         // **Adding a new expense**
         const newExpense: Expense = {
-          id: Date.now(), // Unique ID
+          id: lastId, 
           title: this.expense.title,
           amount: this.expense.amount,
           category: this.expense.category,
-          date: this.expense.date || new Date().toISOString().split('T')[0] 
+          date: this.expense.date || new Date().toISOString().split('T')[0]
         };
   
-        this.store.dispatch(addExpense({ expense: newExpense }));
-  
-        // Update localStorage
-        const updatedExpenses = [...expenses, newExpense];
+        this.store.dispatch(addExpense({ expense: newExpense })); 
+        const updatedExpenses = [...expenses, newExpense]; // ✅ Append only when adding
         this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses));
-  
-        // ✅ Show success toast for addition
         this.messageService.add({ severity: 'success', summary: 'Expense Added', detail: 'New expense added successfully!' });
       }
-  
       this.closeDialog();
     });
   }
-  
-
 
   closeDialog() {
     this.displayDialog = false;
@@ -196,7 +195,9 @@ export class ExpenseFormComponent implements OnInit {
 
   showAddExpenseDialog() {
     this.editingId = null; // Reset edit mode
-    this.expense = { id: 0, title: '', amount: 0, category: '', date: '' }; // Reset form
-    this.displayDialog = true;
+    this.expense = this.selectedExpense 
+    ? { ...this.selectedExpense } // ✅ Use selected expense if available
+    : { id: 0, title: '', amount: 0, category: '', date: '' };
+     this.displayDialog = true;
   }
 }

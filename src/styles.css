@@ -1,6 +1,6 @@
 @import 'primeicons/primeicons.css';
 :root {
-    --font-family: Arial !important;
+    --font-family: 'Roboto',sans-serif !important;
   }
   
   /* Ensure all elements use the default font */
