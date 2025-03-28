@@ -58,8 +58,8 @@ import { InputTextModule } from 'primeng/inputtext';
 export class ExpenseListComponent implements OnInit{
 
     // Placeholder for chart data, we will update it dynamically later
-    pieChartData: ChartData<'pie'> | undefined; // ✅ Use ChartData for Pie Chart
-    lineChartData: ChartData<'line'> | undefined; // ✅ Use ChartData for Line Chart
+    pieChartData: ChartData<'pie'> | undefined; //  Use ChartData for Pie Chart
+    lineChartData: ChartData<'line'> | undefined; //  Use ChartData for Line Chart
 
   private store = inject(Store);
   private router = inject(Router);
@@ -116,11 +116,11 @@ export class ExpenseListComponent implements OnInit{
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
-      dismissableMask: true, // ✅ Allows closing when clicking outside
-      acceptButtonStyleClass: 'p-button-danger', // ✅ Red Delete Button
-      rejectButtonStyleClass: 'p-button-secondary', // ✅ Grey Cancel Button
+      dismissableMask: true, //  Allows closing when clicking outside
+      acceptButtonStyleClass: 'p-button-danger', //  Red Delete Button
+      rejectButtonStyleClass: 'p-button-secondary', //  Grey Cancel Button
       accept: () => {
-        this.onDelete(expenseId); // ✅ Call delete method if accepted
+        this.onDelete(expenseId); //  Call delete method if accepted
       }
     });
   }
@@ -131,10 +131,10 @@ export class ExpenseListComponent implements OnInit{
   }
   
   editExpense(expense: Expense) {
+    // console.log("pressed");
+    // console.log(expense.id);
     this.selectedExpense = { ...expense };
-    if (!this.selectedExpense.id) {
-      this.selectedExpense.id = this.generateUniqueId();
-    }
+    // console.log(this.selectedExpense.id);
     this.editDialogVisible = true;
   }
   
@@ -175,14 +175,17 @@ export class ExpenseListComponent implements OnInit{
     });
     
   
-    this.categoryService.categories$.subscribe((data:string[]) => {
+    this.categoryService.categories$.subscribe((data: string[]) => {
       // console.log('Categories fetched:', data); // Debugging
-      this.categories = data.map(category => ({ 
-        label: category.trim(), 
-        value: category.trim().toLowerCase() 
-      }));
+      this.categories = [
+        { label: "All", value: "all" }, // Add "All" option
+        ...data.map(category => ({ 
+          label: category.trim(), 
+          value: category.trim().toLowerCase() 
+        }))
+      ];
     });
-  
+    
     this.categoryService.fetchCategories();
   }
 
@@ -201,16 +204,25 @@ export class ExpenseListComponent implements OnInit{
     this.selectedCategory = event?.value || null;
     // console.log('Selected Category:', this.selectedCategory); // Debugging
   
-    if (this.selectedCategory) {
+    if (this.selectedCategory === "all" || !this.selectedCategory) {
+      this.filteredExpenses = [...this.expenses]; // Reset to all expenses
+    } else {
       this.filteredExpenses = this.expenses.filter(expense => 
         expense.category?.trim().toLowerCase() === this.selectedCategory
       );
-    } else {
-      this.filteredExpenses = [...this.expenses]; // Show all expenses when no category is selected
     }
   }
   
+  searchExpenses(query: string) {
+    if (!query.trim()) {
+      this.filteredExpenses = [...this.expenses]; // Reset to full list if empty query
+      return;
+    }
   
+    this.filteredExpenses = this.expenses.filter(expense =>
+      expense.title.toLowerCase().includes(query.toLowerCase())
+    );
+  }
 
   onDelete(id: number) {
     this.store.dispatch(deleteExpense({ id }));

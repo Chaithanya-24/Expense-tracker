@@ -1,7 +1,7 @@
 <p-toast position="top-right"></p-toast>
 <div class="expense-form-container">
   
-    <form (ngSubmit)="onSubmit()" #expenseForm="ngForm">
+    <form (ngSubmit)="onSubmit()" #expenseForm="ngForm" autoFocus="false">
       <div class="p-fluid">
         <!-- Title Input -->
         <div class="p-field">
@@ -19,7 +19,7 @@
         </p-floatlabel>
         </div>
         <!-- Amount Input -->
-        <div class="p-field">
+        <div class="p-field" >
         <p-floatlabel variant="on">
           <label for="amount">Amount</label>
           <input 

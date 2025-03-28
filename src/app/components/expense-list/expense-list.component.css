@@ -5,7 +5,6 @@
     margin: auto;
   }
   
-  
   .delete-btn {
     background-color: #dc3545 !important; /* Red */
     color: white !important;
@@ -17,14 +16,22 @@
     font-size: 1.2rem !important;
   }
 
-  .search-container, .filter-container {
+  /* Toolbar elements - same height */
+.search-container,
+.category-dropdown,
+.add-button {
+  height: 40px !important; /* Uniform height */
+}
+
+  .search-container {
     display: flex;
     align-items: center;
+    width: 600px ;
     gap: 10px; /* Adjust spacing */
 }
 
  .p-dropdown {
-    height: 45px !important; /* Ensure equal height */
+    height: 40px !important; /* Ensure equal height */
     width: 250px !important; /* Set equal width */
     font-size: 16px !important;
     font-weight: 500 !important;
@@ -32,21 +39,13 @@
     border-radius: 5px !important;
     padding: 5px 12px !important;
 }
- 
-.search-input{
-  height: 30px !important; /* Ensure equal height */
-  width: 150px !important; /* Set equal width */
-  font-size: 14px !important;
-  font-family: inherit !important;
-  border-radius: 5px !important;
-  padding: 5px 12px !important;
-}
+
   .search-btn {
     height: 36px;
   }
   
-  .add-expense-btn {
-    height: 42px !important; /* Ensure all elements have the same height */
+  .add-expense {
+    height: 40px !important; /* Ensure all elements have the same height */
     font-size: 16px !important;
     border-radius: 5px !important;
     padding: 8px 16px !important;
@@ -124,22 +123,33 @@
   font-size: 14px; /* Adjust text size if needed */
 }
 
-/* Styling the PrimeNG Toolbar */
-.top-toolbar {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Make table responsive */
+.responsive-table {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  width: 100%;
+}
+
+/* Ensure the table doesn't break layout */
+.responsive-table table {
+  width: 100%;
+  min-width: 600px; /* Prevent squishing */
+  border-collapse: collapse;
+}
+
+
+.app-title{
+  font-size: 25px; /* Adjust font size */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  color: #333; /* Adjust color */
 }
 
 /* Align search box and dropdown properly */
+/* Reduce excessive padding in the toolbar */
 .p-toolbar-group-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 1px; /* Reduced spacing */
 }
 
 /* Make the dropdown uniform */
@@ -156,4 +166,72 @@ body, button, input, select, textarea {
   font-family: inherit !important; /* Forces PrimeNG to use browser default */
 }
 
+/* Scrollable Table */
+.table-scroll-container {
+  max-height: 555px;  /* Set height limit */
+  overflow-y: auto;  /* Enable vertical scrolling */
+  overflow-x: auto;
+  border: 1px solid #ddd; /* Optional: Add border for clarity */
+}
+
+.amount-column {
+  text-align: right;
+}
+
+
+/* Ensure Table Header Stays Fixed */
+.table-scroll-container thead {
+  position: sticky;
+  top: 0;
+  background: white; /* Keep header visible */
+  z-index: 1;
+}
+
+/* Adjust table styles */
+.p-datatable-wrapper {
+  max-height: 400px; /* Ensure scrolling works */
+  overflow-y: hidden;
   
+}  
+
+@media screen and (max-width: 768px) {
+  .top-toolbar {
+      flex-direction: column; /* Stack elements */
+      align-items: stretch; /* Full width items */
+  }
+
+  .search-container, 
+  .filter-container, 
+  .add-expense-btn {
+      width: 100%; /* Full width on smaller screens */
+      text-align: center; /* Center items */
+  }
+  .responsive-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .table-scroll-container {
+    max-height: none; /* Remove height restriction */
+  }
+
+
+  /* Ensure input fields are full width */
+  .search-container,
+  .category-dropdown,
+  .add-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Stack charts below table */
+  .expense-container {
+    flex-direction: column;
+  }
+
+  .actions-column {
+    flex-wrap: wrap; /* Stack buttons if needed */
+  }
+}
+

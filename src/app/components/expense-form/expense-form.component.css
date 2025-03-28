@@ -5,8 +5,11 @@ p-button{
     width: 500px !important;  /* Increase width */
     max-width: 90%;
     max-height: 90% !important; /* Adjust height dynamically */
-    
+    display: block;
+    white-space: normal;
   }
+
+ 
   
   .p-dialog-content {
     max-height: 1000px;  /* Increase max height */

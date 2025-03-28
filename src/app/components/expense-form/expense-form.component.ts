@@ -67,8 +67,13 @@ export class ExpenseFormComponent implements OnInit {
   
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
+      if (id !== null) { // Explicitly check for null
+        this.editingId = Number(id);
+        console.log("Editing ID set from route:", this.editingId);
+      }
       if (id) {
         this.editingId = Number(id);
+        console.log("Editing ID:", this.editingId);
         this.isEditMode = true; // Indicate we're editing
         this.expenses$.pipe(take(1)).subscribe(expenses => {
           const foundExpense = expenses.find(exp => exp.id === this.editingId);
@@ -90,12 +95,14 @@ export class ExpenseFormComponent implements OnInit {
       if (!this.expenseForm) {
         this.initForm(); // Ensure form is initialized
       }
+      this.editingId = this.selectedExpense.id;
+      // console.log("Editing ID set from selectedExpense:", this.editingId);
       const formattedDate = this.formatDate(this.selectedExpense.date);
 
       if (this.selectedExpense) { // Add a null check
         this.expenseForm.patchValue({...this.selectedExpense, date: formattedDate,});
       }
-      this.expense = { ...this.selectedExpense }; // ✅ Copy selected expense
+      this.expense = { ...this.selectedExpense }; //  Copy selected expense
       this.displayDialog = true; // Ensure dialog opens when editing
   }
 }
@@ -148,18 +155,28 @@ formatDate(date: string): string {
     if (!this.expense.title || !this.expense.amount || !this.expense.category || !this.expense.date) {
       return; // Ensure all fields are filled
     }
-  
+    this.isEditMode = true;
+    // console.log(this.isEditMode);
+    // console.log(this.editingId);
     this.expenses$.pipe(take(1)).subscribe(expenses => {
       if (this.isEditMode && this.editingId !== null) {
         // **Find the index of the expense being edited**
         const expenseIndex = expenses.findIndex(exp => exp.id === this.editingId);
-  
+        // console.log("Expense index:", expenseIndex);
         if (expenseIndex !== -1) {
           const updatedExpenses = [...expenses];
-          updatedExpenses[expenseIndex] = this.expense; // ✅ Replace instead of appending
-          this.store.dispatch(updateExpense({ expense: this.expense }));
+          const updatedExpense: Expense = {
+            ...this.expense,
+            id: this.editingId ?? 0 // Ensure id is always a number
+          };
+          updatedExpenses[expenseIndex] = updatedExpense; //  Replace instead of appending
+          // this.store.dispatch(updateExpense({ expense: this.expense }));
+          // console.log("Subscribing to store to check updated expenses...");
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           this.store.select(selectAllExpenses).pipe(take(1)).subscribe(updatedExpenses => {
-          console.log("Updated expenses from store:", updatedExpenses);
+          this.store.dispatch(updateExpense({ expense: updatedExpense })); // Dispatch update
+          // console.log("Updated expenses from store:", updatedExpenses);
+          // console.log("Updated expense sucessfully") 
           });
           this.messageService.add({ severity: 'success', summary: 'Expense Updated', detail: 'Expense updated successfully!' });
           this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses)); // ✅ Correct local storage update
@@ -177,7 +194,7 @@ formatDate(date: string): string {
         };
   
         this.store.dispatch(addExpense({ expense: newExpense })); 
-        const updatedExpenses = [...expenses, newExpense]; // ✅ Append only when adding
+        const updatedExpenses = [...expenses, newExpense]; // Append only when adding
         this.localStorageService.setItem('expenses', JSON.stringify(updatedExpenses));
         this.messageService.add({ severity: 'success', summary: 'Expense Added', detail: 'New expense added successfully!' });
       }
@@ -196,7 +213,7 @@ formatDate(date: string): string {
   showAddExpenseDialog() {
     this.editingId = null; // Reset edit mode
     this.expense = this.selectedExpense 
-    ? { ...this.selectedExpense } // ✅ Use selected expense if available
+    ? { ...this.selectedExpense } // Use selected expense if available
     : { id: 0, title: '', amount: 0, category: '', date: '' };
      this.displayDialog = true;
   }

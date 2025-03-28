@@ -1,28 +1,30 @@
-<p-toolbar> 
-  <button pButton label="Add Expense" icon="pi pi-plus" class="add-button" (click)="showDialog()"></button>
+<div>
+<p-toolbar class="top-toolbar"> 
+  <h1 class="app-title">Expense Tracker</h1>
+  <p-iconfield>
+    <p-inputicon styleClass="pi pi-search"></p-inputicon>
+    <input pInputText type="text" 
+    class=" search-container"
+    (input)="filterExpenses($event, dt)"
+     placeholder="Search expenses..."  
+     pSize="large"/>
+  </p-iconfield>
   <p-dropdown 
     [options]="categories" 
     placeholder="Filter by Category" 
     optionLabel="label"  
-    [showClear]="true" 
+    [showClear]="false" 
     (onChange)="onCategoryChange($event.value)"
     class="category-dropdown">
   </p-dropdown>
-
-      <p-iconfield>
-        <p-inputicon styleClass="pi pi-search"></p-inputicon>
-        <input pInputText type="text" 
-        (input)="filterExpenses($event, dt)"
-         placeholder="Search expenses..."  
-         pSize="large"/>
-      </p-iconfield>
+  <button pButton label="Add Expense" icon="pi pi-plus" class="add-button" (click)="showDialog()"></button>
 </p-toolbar>
-
+</div>
 <!-- Parent container for Table & Charts -->
 <div style="display: flex; align-items: flex-start; gap: 20px;">
 
   <!-- Expense Table (Flex: 3) -->
-  <div style="flex: 3; min-width: 600px;">
+  <div style="flex: 3; min-width: 600px;" class="table-scroll-container">
     <p-table #dt
       [value]="filteredExpenses" 
       [paginator]="true" 
@@ -32,17 +34,17 @@
       <ng-template pTemplate="header">
         <tr>
           <th>Title</th>
-          <th>Amount</th>
+          <th class="amount-column">Amount</th>
           <th>Category</th>
           <th>Date</th>
           <th>Actions</th>
         </tr>
       </ng-template>
-
+     
       <ng-template pTemplate="body" let-expense of expenses>
         <tr>
           <td>{{ expense.title }}</td>
-          <td>{{ expense.amount | currency:'INR' }}</td>
+          <td class="amount-column">{{ expense.amount | currency:'INR' }}</td>
           <td>{{ expense.category }}</td>
           <td >
             {{ expense.date | timeago }}
@@ -59,6 +61,14 @@
           </td>
         </tr>
       </ng-template>
+        <!-- ✅ Correct placement of "No results found" -->
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5" class="no-results" style="text-align: center; font-weight: bold; color: red;">
+        No results found.
+      </td>
+    </tr>
+  </ng-template>
     </p-table>
   </div>
 
